@@ -27,7 +27,8 @@ func main() {
 	api.GET(controller.GetContactsRoute, controller.GetContactsController)
 
 	api.GET(controller.GetChatsRoute, controller.GetChatsController)
-	//
+	api.POST(controller.CreateChatRoute, controller.CreateChatController)
+	api.GET(controller.GetChatRoute, controller.GetChatController)
 	//	Route::post('/message', [MessageController::class, 'create']);
 	//	Route::post('/upload', [MessageController::class, 'upload']);
 	//	Route::get('/messages/chat/{id}', [MessageController::class, 'index']);
