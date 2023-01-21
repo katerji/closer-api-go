@@ -38,7 +38,7 @@ func LoginService(phoneNumber string, password string) (model.User, error) {
 	err := row.Scan(&loginRow.Id, &loginRow.PhoneNumber, &loginRow.Name, &loginRow.Password)
 	if err != nil {
 		fmt.Println(err)
-		return model.User{}, errors.New("PhoneNumber number number does not exist")
+		return model.User{}, errors.New("Phone number does not exist")
 	}
 
 	authed := CheckPasswordHash(password, loginRow.Password)

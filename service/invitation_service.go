@@ -69,9 +69,18 @@ func GetInviterFromInvitationId(invitationId int) (model.User, error) {
 	return inviter, nil
 }
 
-func IsAuthorizedToAcceptInvitation(userId int, invitationId int) bool {
+func IsAuthorizedToAcceptOrRejectInvitation(userId int, invitationId int) bool {
 	var isAuthorized int
-	err := dbclient.GetDbInstance().QueryRow(isAuthorizedToAcceptInvitationQuery, invitationId, userId).Scan(&isAuthorized)
+	err := dbclient.GetDbInstance().QueryRow(isAuthorizedToAcceptOrRejectInvitationQuery, invitationId, userId).Scan(&isAuthorized)
+	if err != nil {
+		return false
+	}
+	return isAuthorized == 1
+}
+
+func IsAuthorizedToDeleteInvitation(userId int, invitationId int) bool {
+	var isAuthorized int
+	err := dbclient.GetDbInstance().QueryRow(isAuthorizedToDeleteInvitationQuery, invitationId, userId).Scan(&isAuthorized)
 	if err != nil {
 		return false
 	}
@@ -97,5 +106,6 @@ const getInviterFromInvitationIdQuery = "SELECT u.id, u.name, u.phone_number " +
 	"FROM invitations_go i " +
 	"JOIN users_go u ON i.user_id = u.id " +
 	"WHERE i.id = ?"
-const isAuthorizedToAcceptInvitationQuery = "SELECT 1 FROM invitations_go WHERE id = ? AND contact_user_id = ?"
+const isAuthorizedToAcceptOrRejectInvitationQuery = "SELECT 1 FROM invitations_go WHERE id = ? AND contact_user_id = ?"
+const isAuthorizedToDeleteInvitationQuery = "SELECT 1 FROM invitations_go WHERE id = ? AND user_id = ?"
 const deleteInvitationQuery = "DELETE FROM invitations_go WHERE id = ?"

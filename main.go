@@ -3,34 +3,38 @@ package main
 import (
 	"closer-api-go/controller"
 	"closer-api-go/middleware"
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func main() {
 	r := gin.Default()
 
 	api := r.Group("/api")
-	auth := api.Group("/auth")
-	auth.POST("/login", controller.Login)
-	auth.POST("/register", controller.Register)
-
+	auth := api.Group(controller.AuthGroupRoute)
+	auth.POST(controller.LoginRoute, controller.Login)
+	auth.POST(controller.RegisterRoute, controller.Register)
 
 	api.Use(middleware.AuthMiddleware())
 
-	api.GET("/chat", func (c *gin.Context) {
-		fmt.Println(c.Get("user"))
-		c.JSON(http.StatusOK, "yes")
-	})
+	api.GET(controller.GetInvitationsRoute, controller.GetInvitationsController)
 
-	api.GET("/invitations", controller.GetInvitationsController)
+	invitationGroup := api.Group(controller.InvitationGroupRoute)
+	invitationGroup.POST(controller.InviteRoute, controller.InviteController)
+	invitationGroup.POST(controller.AcceptInvitationRoute, controller.AcceptInvitationController)
+	invitationGroup.DELETE(controller.RejectInvitationRoute, controller.RejectInvitationController)
+	invitationGroup.DELETE(controller.DeleteInvitationRoute, controller.DeleteInvitationController)
 
-	invitationGroup := api.Group("/invitation")
-	invitationGroup.POST("/send/:phone_number", controller.InviteController)
-	invitationGroup.POST("/accept/:invitation_id", controller.AcceptInvitationController)
-	//invitationGroup.POST("/reject/:invitation_id", controller.InviteController)
-	//invitationGroup.POST("/delete/:invitation_id", controller.InviteController)
+	api.GET(controller.GetContactsRoute, controller.GetContactsController)
+
+	api.GET(controller.GetChatsRoute, controller.GetChatsController)
+	//
+	//	Route::post('/message', [MessageController::class, 'create']);
+	//	Route::post('/upload', [MessageController::class, 'upload']);
+	//	Route::get('/messages/chat/{id}', [MessageController::class, 'index']);
+	//
+	//	Route::post('/chat', [ChatController::class, 'create']);
+	//	Route::get('/chat/{id}', [ChatController::class, 'getChat']);
+	//	Route::get('/chats', [ChatController::class, 'index']);
 
 	r.Run(":9999")
 }
