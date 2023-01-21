@@ -24,7 +24,7 @@ func SendBadRequestResponse(c *gin.Context, errorMessage ErrorMessage) {
 	if len(errorMessage.string) > 0 {
 		errorReturn["error"] = errorMessage.string
 	}
-	c.AbortWithStatusJSON(400, errorReturn)
+	c.AbortWithStatusJSON(http.StatusBadRequest, errorReturn)
 }
 func ErrorResponse(c *gin.Context, errorObject ErrorObject) {
 	errorReturn := map[string]string{

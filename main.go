@@ -33,7 +33,6 @@ func main() {
 	api.POST(controller.CreateMessageRoute, controller.CreateMessageController)
 	api.GET(controller.GetChatMessagesRoute, controller.GetChatMessageController)
 	//	Route::post('/upload', [MessageController::class, 'upload']);
-	//	Route::get('/messages/chat/{id}', [MessageController::class, 'index']);
 
-	r.Run(":9999")
+	r.Run(":80")
 }
