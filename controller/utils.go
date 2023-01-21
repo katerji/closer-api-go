@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"closer-api-go/model"
+	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -11,7 +14,7 @@ type ErrorMessage struct {
 
 type ErrorObject struct {
 	Message string
-	Code int
+	Code    int
 }
 
 func badRequest(c *gin.Context, errorMessage ErrorMessage) {
@@ -33,4 +36,17 @@ func ErrorResponse(c *gin.Context, errorObject ErrorObject) {
 		code = errorObject.Code
 	}
 	c.AbortWithStatusJSON(code, errorReturn)
+}
+
+func GetCurrentUser(c *gin.Context) model.User {
+	var user model.User
+	userEnc, _ := c.Get("user")
+	jsonEncodedUser, _ := json.Marshal(userEnc)
+	err := json.Unmarshal(jsonEncodedUser, &user)
+	if err != nil {
+		fmt.Println(err)
+		return user
+	}
+	fmt.Println(user)
+	return user
 }

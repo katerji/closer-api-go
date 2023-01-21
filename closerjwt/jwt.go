@@ -11,6 +11,7 @@ import (
 )
 
 func VerifyToken(token string) (model.User, error) {
+	err := godotenv.Load(".env")
 	jwtSecret := os.Getenv("JWT_SECRET")
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -19,6 +20,7 @@ func VerifyToken(token string) (model.User, error) {
 		return []byte(jwtSecret), nil
 	})
 	if err != nil {
+		fmt.Println(err)
 		return model.User{}, errors.New("error parsing token")
 	}
 	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {

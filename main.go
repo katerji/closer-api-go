@@ -10,25 +10,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	//r.Use(middleware.AuthMiddleware())
-	//r.GET("/benchmark", MyBenchLogger(), benchEndpoint)
-	//
-	//// Authorization group
-	//// authorized := r.Group("/", AuthRequired())
-	//// exactly the same as:
-	//authorized := r.Group("/")
-	//// per group middleware! in this case we use the custom created
-	//// AuthRequired() middleware just in the "authorized" group.
-	//authorized.Use(AuthRequired())
-	//{
-	//	authorized.POST("/login", loginEndpoint)
-	//	authorized.POST("/submit", submitEndpoint)
-	//	authorized.POST("/read", readEndpoint)
-	//
-	//	// nested group
-	//	testing := authorized.Group("testing")
-	//	testing.GET("/analytics", analyticsEndpoint)
-	//}
+
 	api := r.Group("/api")
 	auth := api.Group("/auth")
 	auth.POST("/login", controller.Login)
@@ -41,5 +23,7 @@ func main() {
 		fmt.Println(c.Get("user"))
 		c.JSON(http.StatusOK, "yes")
 	})
+	api.POST("/invite/:phone_number", controller.InviteController)
+	api.GET("/invitations", controller.GetInvitationsController)
 	r.Run(":9999")
 }
