@@ -30,11 +30,11 @@ func CreateChatController(c *gin.Context) {
 	user := GetCurrentUser(c)
 	contactId, err := strconv.Atoi(c.Param("contact_id"))
 	if err != nil {
-		badRequest(c, ErrorMessage{})
+		SendBadRequestResponse(c, ErrorMessage{})
 		return
 	}
 	if !service.AreUsersContacts(user.Id, contactId) {
-		UnauthorizedErrorResponse(c)
+		SendUnauthorizedResponse(c)
 		return
 	}
 	chatId := service.GetChatIdByUserIds(user.Id, contactId)
@@ -46,10 +46,7 @@ func CreateChatController(c *gin.Context) {
 			return
 		}
 	} else {
-		fmt.Println("here")
 		chatId = service.CreateChatWithoutAnyInfo(user.Id, contactId)
-
-		fmt.Println(chatId)
 		response["chat"], err = service.GetChatById(chatId, user.Id)
 	}
 	c.JSON(http.StatusOK, response)
@@ -63,12 +60,12 @@ func GetChatController(c *gin.Context) {
 	if err != nil {
 		fmt.Println(chatId)
 		fmt.Println(err)
-		badRequest(c, ErrorMessage{})
+		SendBadRequestResponse(c, ErrorMessage{})
 		return
 	}
 	user := GetCurrentUser(c)
 	if !service.IsUserInChat(chatId, user.Id) {
-		UnauthorizedErrorResponse(c)
+		SendUnauthorizedResponse(c)
 		return
 	}
 	chat, err := service.GetChatById(chatId, user.Id)

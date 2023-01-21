@@ -29,7 +29,7 @@ const LoginRoute = "/login"
 func Login(c *gin.Context) {
 	var loginRequest LoginRequest
 	if err := c.BindJSON(&loginRequest); err != nil {
-		badRequest(c, ErrorMessage{})
+		SendBadRequestResponse(c, ErrorMessage{})
 		return
 	}
 	user, err := service.LoginService(loginRequest.PhoneNumber, loginRequest.Password)
@@ -57,18 +57,18 @@ func Register(c *gin.Context) {
 	var registerRequest RegisterRequest
 	if err := c.BindJSON(&registerRequest); err != nil {
 		fmt.Println(err)
-		badRequest(c, ErrorMessage{})
+		SendBadRequestResponse(c, ErrorMessage{})
 		return
 	}
 	if registerRequest.PasswordConfirmation != registerRequest.Password {
-		badRequest(c, ErrorMessage{"Password confirmation does not match."})
+		SendBadRequestResponse(c, ErrorMessage{"Password confirmation does not match."})
 		return
 	}
 
 	phoneNumberFull := registerRequest.CountryCode + strconv.Itoa(registerRequest.PhoneNumber)
 	user, err := service.RegisterUserService(registerRequest.Name, phoneNumberFull, registerRequest.Password)
 	if err != nil {
-		badRequest(c, ErrorMessage{
+		SendBadRequestResponse(c, ErrorMessage{
 			"Phone number already exists",
 		})
 		return

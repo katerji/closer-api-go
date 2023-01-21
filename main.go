@@ -29,13 +29,11 @@ func main() {
 	api.GET(controller.GetChatsRoute, controller.GetChatsController)
 	api.POST(controller.CreateChatRoute, controller.CreateChatController)
 	api.GET(controller.GetChatRoute, controller.GetChatController)
-	//	Route::post('/message', [MessageController::class, 'create']);
+
+	api.POST(controller.CreateMessageRoute, controller.CreateMessageController)
+	api.GET(controller.GetChatMessagesRoute, controller.GetChatMessageController)
 	//	Route::post('/upload', [MessageController::class, 'upload']);
 	//	Route::get('/messages/chat/{id}', [MessageController::class, 'index']);
-	//
-	//	Route::post('/chat', [ChatController::class, 'create']);
-	//	Route::get('/chat/{id}', [ChatController::class, 'getChat']);
-	//	Route::get('/chats', [ChatController::class, 'index']);
 
 	r.Run(":9999")
 }

@@ -16,18 +16,18 @@ func InviteController(c *gin.Context) {
 	contactPhoneNumber := c.Param("phone_number")
 	user := GetCurrentUser(c)
 	if contactPhoneNumber == user.PhoneNumber {
-		badRequest(c, ErrorMessage{})
+		SendBadRequestResponse(c, ErrorMessage{})
 		return
 	}
 	contact, err := service.GetUserByPhoneNumber(contactPhoneNumber)
 	if err != nil {
-		badRequest(c, ErrorMessage{"Phone number does not exist"})
+		SendBadRequestResponse(c, ErrorMessage{"Phone number does not exist"})
 		return
 	}
 
 	err = service.Invite(user.Id, contact.Id)
 	if err != nil {
-		badRequest(c, ErrorMessage{"There is a pending invitation"})
+		SendBadRequestResponse(c, ErrorMessage{"There is a pending invitation"})
 		return
 	}
 	invitations, err := getSentAndReceivedInvitations(user)
@@ -44,18 +44,18 @@ func AcceptInvitationController(c *gin.Context) {
 	invitationId, _ := strconv.Atoi(c.Param("invitation_id"))
 	user := GetCurrentUser(c)
 	if !service.IsAuthorizedToAcceptOrRejectInvitation(user.Id, invitationId) {
-		UnauthorizedErrorResponse(c)
+		SendUnauthorizedResponse(c)
 		return
 	}
 	inviterUser, err := service.GetInviterFromInvitationId(invitationId)
 	if err != nil {
-		badRequest(c, ErrorMessage{"invitation not found"})
+		SendBadRequestResponse(c, ErrorMessage{"invitation not found"})
 		return
 	}
 
 	err = service.AddContact(user, inviterUser)
 	if err != nil {
-		badRequest(c, ErrorMessage{"Already contacts"})
+		SendBadRequestResponse(c, ErrorMessage{"Already contacts"})
 		return
 	}
 	service.DeleteInvitation(invitationId)
@@ -72,7 +72,7 @@ func RejectInvitationController(c *gin.Context) {
 	invitationId, _ := strconv.Atoi(c.Param("invitation_id"))
 	user := GetCurrentUser(c)
 	if !service.IsAuthorizedToAcceptOrRejectInvitation(user.Id, invitationId) {
-		UnauthorizedErrorResponse(c)
+		SendUnauthorizedResponse(c)
 		return
 	}
 	service.DeleteInvitation(invitationId)
@@ -86,10 +86,13 @@ func RejectInvitationController(c *gin.Context) {
 }
 const DeleteInvitationRoute = "/delete/:invitation_id"
 func DeleteInvitationController(c *gin.Context) {
-	invitationId, _ := strconv.Atoi(c.Param("invitation_id"))
+	invitationId, err := strconv.Atoi(c.Param("invitation_id"))
+	if err != nil {
+		SendBadRequestResponse(c, ErrorMessage{})
+	}
 	user := GetCurrentUser(c)
 	if !service.IsAuthorizedToDeleteInvitation(user.Id, invitationId) {
-		UnauthorizedErrorResponse(c)
+		SendUnauthorizedResponse(c)
 		return
 	}
 	service.DeleteInvitation(invitationId)

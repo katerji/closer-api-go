@@ -17,7 +17,7 @@ type ErrorObject struct {
 	Code    int
 }
 
-func badRequest(c *gin.Context, errorMessage ErrorMessage) {
+func SendBadRequestResponse(c *gin.Context, errorMessage ErrorMessage) {
 	errorReturn := map[string]string{
 		"error": "Bad request.",
 	}
@@ -38,11 +38,17 @@ func ErrorResponse(c *gin.Context, errorObject ErrorObject) {
 	c.AbortWithStatusJSON(code, errorReturn)
 }
 
-func UnauthorizedErrorResponse(c *gin.Context) {
+func SendUnauthorizedResponse(c *gin.Context) {
 	errorMessage := map[string]string{
 		"error": "Unauthorized",
 	}
 	c.AbortWithStatusJSON(http.StatusUnauthorized, errorMessage)
+}
+func SendEmptyOkayResponse(c *gin.Context) {
+	response := map[string]string{
+		"success": "true",
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 func GetCurrentUser(c *gin.Context) model.User {

@@ -56,8 +56,6 @@ func GetUserChats(userId int) ([]model.Chat, error) {
 	var params []any
 	params = append(params, userId)
 	params = append(params, keys...)
-	fmt.Println(params)
-	fmt.Println(query)
 	rows, err = dbclient.GetDbInstance().Query(query, params...)
 
 	if err != nil {
