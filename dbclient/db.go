@@ -75,7 +75,7 @@ func (closerDb *closerDb) Fetch(query string, args ...any) []interface{} {
 	return results
 }
 
-func (closerDb *closerDb) Exec(query string, args ...any) int {
+func (closerDb *closerDb) Insert(query string, args ...any) int {
 	rows, err := closerDb.Prepare(query)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -92,4 +92,17 @@ func (closerDb *closerDb) Exec(query string, args ...any) int {
 		return 0
 	}
 	return int(insertId)
+}
+func (closerDb *closerDb) Exec(query string, args ...any) bool {
+	rows, err := closerDb.Prepare(query)
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	_, err = rows.Exec(args...)
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	return true
 }

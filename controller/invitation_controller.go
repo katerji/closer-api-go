@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func InviteController(c *gin.Context) {
@@ -25,6 +26,34 @@ func InviteController(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 		ErrorResponse(c, ErrorObject{})
+		return
+	}
+	c.JSON(http.StatusOK, invitations)
+	return
+}
+
+func AcceptInvitationController(c *gin.Context) {
+	invitationId, _ := strconv.Atoi(c.Param("invitation_id"))
+	user := GetCurrentUser(c)
+	if !service.IsAuthorizedToAcceptInvitation(user.Id, invitationId) {
+		UnauthorizedErrorResponse(c)
+		return
+	}
+	inviterUser, err := service.GetInviterFromInvitationId(invitationId)
+	if err != nil {
+		badRequest(c, ErrorMessage{"invitation not found"})
+		return
+	}
+
+	err = service.AddContact(user, inviterUser)
+	if err != nil {
+		badRequest(c, ErrorMessage{"Already contacts"})
+		return
+	}
+	service.DeleteInvitation(invitationId)
+	invitations, err := getSentAndReceivedInvitations(user)
+	if err != nil {
+		ErrorResponse(c, ErrorObject{"Error fetching invitations", 500})
 		return
 	}
 	c.JSON(http.StatusOK, invitations)

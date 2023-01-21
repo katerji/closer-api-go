@@ -38,6 +38,13 @@ func ErrorResponse(c *gin.Context, errorObject ErrorObject) {
 	c.AbortWithStatusJSON(code, errorReturn)
 }
 
+func UnauthorizedErrorResponse(c *gin.Context) {
+	errorMessage := map[string]string{
+		"error": "Unauthorized",
+	}
+	c.AbortWithStatusJSON(http.StatusUnauthorized, errorMessage)
+}
+
 func GetCurrentUser(c *gin.Context) model.User {
 	var user model.User
 	userEnc, _ := c.Get("user")

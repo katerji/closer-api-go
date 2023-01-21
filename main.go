@@ -23,7 +23,14 @@ func main() {
 		fmt.Println(c.Get("user"))
 		c.JSON(http.StatusOK, "yes")
 	})
-	api.POST("/invite/:phone_number", controller.InviteController)
+
 	api.GET("/invitations", controller.GetInvitationsController)
+
+	invitationGroup := api.Group("/invitation")
+	invitationGroup.POST("/send/:phone_number", controller.InviteController)
+	invitationGroup.POST("/accept/:invitation_id", controller.AcceptInvitationController)
+	//invitationGroup.POST("/reject/:invitation_id", controller.InviteController)
+	//invitationGroup.POST("/delete/:invitation_id", controller.InviteController)
+
 	r.Run(":9999")
 }

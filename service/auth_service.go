@@ -20,7 +20,7 @@ func RegisterUserService(name string, phoneNumber string, password string) (mode
 		phoneNumber,
 		password,
 	}
-	userId := db.Exec(registerQuery, args...)
+	userId := db.Insert(registerQuery, args...)
 	if userId == 0 {
 		return model.User{}, errors.New("phone Number already exists")
 	}
