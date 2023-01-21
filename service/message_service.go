@@ -31,4 +31,4 @@ func GetChatMessages(chatId int) []model.Message {
 }
 
 const insertMessageQuery = "insert into messages_go (sender_user_id, chat_id, message, message_type) values (?, ?, ?, ?)"
-const getChatMessagesQuery = "SELECT id, message, message_type, sender_user_id FROM messages_go WHERE chat_id = ? ORDER BY created_at DESC"
+const getChatMessagesQuery = "SELECT id, message, message_type, sender_user_id FROM messages_go WHERE chat_id = ? ORDER BY created_at DESC LIMIT 50"

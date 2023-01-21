@@ -16,6 +16,7 @@ type MessageRequest struct {
 }
 
 const CreateMessageRoute = "/message"
+
 func CreateMessageController(c *gin.Context) {
 	var messageRequest MessageRequest
 	if err := c.BindJSON(&messageRequest); err != nil {
@@ -40,13 +41,14 @@ func CreateMessageController(c *gin.Context) {
 }
 
 const GetChatMessagesRoute = "/messages/chat/:chat_id"
+
 func GetChatMessageController(c *gin.Context) {
 	chatId, err := strconv.Atoi(c.Param("chat_id"))
 	if err != nil {
 		SendBadRequestResponse(c, ErrorMessage{})
 		return
 	}
-	user:=GetCurrentUser(c)
+	user := GetCurrentUser(c)
 	if !service.IsUserInChat(chatId, user.Id) {
 		SendUnauthorizedResponse(c)
 		return

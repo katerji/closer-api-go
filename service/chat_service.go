@@ -57,7 +57,6 @@ func GetUserChats(userId int) ([]model.Chat, error) {
 	params = append(params, userId)
 	params = append(params, keys...)
 	rows, err = dbclient.GetDbInstance().Query(query, params...)
-
 	if err != nil {
 		fmt.Println(err)
 		return []model.Chat{}, err
@@ -68,6 +67,14 @@ func GetUserChats(userId int) ([]model.Chat, error) {
 		err = rows.Scan(&chatId, &user.Id, &user.Name, &user.PhoneNumber)
 		chat := chats[chatId]
 		chat.SetNewUser(user)
+		chats[chatId] = chat
+	}
+	for chatId, chat := range chats {
+		messages := GetChatMessages(chatId)
+		if len(messages) == 0 {
+			messages = []model.Message{}
+		}
+		chat.SetMessages(messages)
 		chats[chatId] = chat
 	}
 	i, values := 0, make([]model.Chat, len(chats))

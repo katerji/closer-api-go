@@ -26,6 +26,7 @@ type RegisterRequest struct {
 const AuthGroupRoute = "/auth"
 
 const LoginRoute = "/login"
+
 func Login(c *gin.Context) {
 	var loginRequest LoginRequest
 	if err := c.BindJSON(&loginRequest); err != nil {
@@ -53,6 +54,7 @@ func Login(c *gin.Context) {
 }
 
 const RegisterRoute = "/register"
+
 func Register(c *gin.Context) {
 	var registerRequest RegisterRequest
 	if err := c.BindJSON(&registerRequest); err != nil {

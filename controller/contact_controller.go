@@ -8,6 +8,7 @@ import (
 )
 
 const GetContactsRoute = "/contacts"
+
 func GetContactsController(c *gin.Context) {
 	user := GetCurrentUser(c)
 	contacts, err := service.GetContacts(user.Id)

@@ -12,6 +12,7 @@ import (
 const InvitationGroupRoute = "/invitation"
 
 const InviteRoute = "/send/:phone_number"
+
 func InviteController(c *gin.Context) {
 	contactPhoneNumber := c.Param("phone_number")
 	user := GetCurrentUser(c)
@@ -39,7 +40,9 @@ func InviteController(c *gin.Context) {
 	c.JSON(http.StatusOK, invitations)
 	return
 }
+
 const AcceptInvitationRoute = "/accept/:invitation_id"
+
 func AcceptInvitationController(c *gin.Context) {
 	invitationId, _ := strconv.Atoi(c.Param("invitation_id"))
 	user := GetCurrentUser(c)
@@ -67,7 +70,9 @@ func AcceptInvitationController(c *gin.Context) {
 	c.JSON(http.StatusOK, invitations)
 	return
 }
+
 const RejectInvitationRoute = "/reject/:invitation_id"
+
 func RejectInvitationController(c *gin.Context) {
 	invitationId, _ := strconv.Atoi(c.Param("invitation_id"))
 	user := GetCurrentUser(c)
@@ -84,7 +89,9 @@ func RejectInvitationController(c *gin.Context) {
 	c.JSON(http.StatusOK, invitations)
 	return
 }
+
 const DeleteInvitationRoute = "/delete/:invitation_id"
+
 func DeleteInvitationController(c *gin.Context) {
 	invitationId, err := strconv.Atoi(c.Param("invitation_id"))
 	if err != nil {
@@ -106,6 +113,7 @@ func DeleteInvitationController(c *gin.Context) {
 }
 
 const GetInvitationsRoute = "/invitations"
+
 func GetInvitationsController(c *gin.Context) {
 	user := GetCurrentUser(c)
 	invitations, err := getSentAndReceivedInvitations(user)
