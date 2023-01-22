@@ -72,6 +72,7 @@ const UploadImageRoute = "/message/upload"
 
 func UploadImageController(c *gin.Context) {
 	formFile, err := c.FormFile("file")
+	formFile2, err := c.FormFile("file")
 
 	if err != nil {
 		fmt.Println(err)
@@ -99,25 +100,29 @@ func UploadImageController(c *gin.Context) {
 	filePathOnS3 := fmt.Sprintf("%d/%d/%s", chatId, user.Id, fileName)
 
 	imagePath, _ := formFile.Open()
+	imagePath2, _ := formFile2.Open()
 	defer func(imagePath multipart.File) {
 		err = imagePath.Close()
 		if err != nil {
 			fmt.Println(err)
 		}
 	}(imagePath)
-
+	go func() {
+		awsclient.UploadToS3(imagePath2, filePathOnS3)
+		defer imagePath2.Close()
+	}()
 	blurredImageBase64 := blurAndResizeImage(imagePath)
 	if len(blurredImageBase64) == 0 {
 		SendBadRequestResponse(c, ErrorMessage{})
 		return
 	}
-	go awsclient.UploadToS3(imagePath, filePathOnS3)
+
 	messageObject := model.Message{
-		SenderId:    user.Id,
-		ChatId:      chatId,
-		Message:     message,
-		MessageType: model.MessageTypeImage,
-		S3Path:      filePathOnS3,
+		SenderId:          user.Id,
+		ChatId:            chatId,
+		Message:           message,
+		MessageType:       model.MessageTypeImage,
+		S3Path:            filePathOnS3,
 		Base64EncodedBlur: blurredImageBase64,
 	}
 	messageId := service.InsertMessageImage(messageObject)
