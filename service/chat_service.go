@@ -33,7 +33,7 @@ func GetUserChats(userId int) ([]model.Chat, error) {
 	}
 	for rows.Next() {
 		var chat model.Chat
-		err = rows.Scan(&chat.Id)
+		err = rows.Scan(&chat.Id, &chat.UpdatedAt)
 		if err != nil {
 			fmt.Println(err)
 			return []model.Chat{}, err
@@ -160,7 +160,7 @@ func IsUserInChat(chatId int, userId int) bool {
 const insertChatQuery = "INSERT INTO chats_go (name) VALUES (null)"
 const insertUserChatQuery = "INSERT INTO user_chat_go (chat_id, user_id)"
 
-const getChatsQuery = "select chat_id from user_chat_go where user_id = ? ORDER BY updated_at DESC"
+const getChatsQuery = "select chat_id, updated_at from user_chat_go where user_id = ? ORDER BY updated_at DESC"
 const getUsersInChatsBaseQuery = "select ucg.chat_id, u.id, u.name, u.phone_number " +
 	"from users_go u " +
 	"join user_chat_go ucg on u.id = ucg.user_id " +

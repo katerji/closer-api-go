@@ -5,3 +5,7 @@ type Invitation struct {
 	Inviter User `json:"inviter"`
 	Contact User `json:"contact"`
 }
+
+func (i *Invitation) ToOutput() User {
+	return i.Inviter
+}

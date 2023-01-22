@@ -8,6 +8,7 @@ type Message struct {
 	MessageType       MessageType `json:"message_type"`
 	S3Path            string      `json:"s3_path"`
 	Base64EncodedBlur string      `json:"base64_encoded_blur"`
+	CreatedAt         string      `json:"created_at"`
 }
 
 func (m *Message) ToOutput() Message {
@@ -18,6 +19,7 @@ func (m *Message) ToOutput() Message {
 		Message:           m.Message,
 		MessageType:       m.MessageType,
 		Base64EncodedBlur: m.Base64EncodedBlur,
+		CreatedAt:         m.CreatedAt,
 	}
 }
 

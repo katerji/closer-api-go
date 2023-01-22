@@ -15,8 +15,8 @@ func Invite(userId int, contactUserId int) error {
 	return nil
 }
 
-func GetSentInvitations(user model.User) ([]model.Invitation, error) {
-	invitations := make([]model.Invitation, 0)
+func GetSentInvitations(user model.User) ([]model.User, error) {
+	invitations := make([]model.User, 0)
 	rows, err := dbclient.GetDbInstance().Query(getSentInvitationsQuery, user.Id)
 	if err != nil {
 		fmt.Println(err)
@@ -27,18 +27,18 @@ func GetSentInvitations(user model.User) ([]model.Invitation, error) {
 		var invitation model.Invitation
 		err := rows.Scan(&invitation.Id, &contactUser.Id, &contactUser.Name, &contactUser.PhoneNumber)
 		if err != nil {
-			var invitations []model.Invitation
+			var invitations []model.User
 			return invitations, err
 		}
 		invitation.Inviter = user
 		invitation.Contact = contactUser
-		invitations = append(invitations, invitation)
+		invitations = append(invitations, invitation.ToOutput())
 	}
 	return invitations, nil
 }
 
-func GetReceivedInvitations(user model.User) ([]model.Invitation, error) {
-	var invitations []model.Invitation
+func GetReceivedInvitations(user model.User) ([]model.User, error) {
+	var invitations []model.User
 	rows, err := dbclient.GetDbInstance().Query(getReceivedInvitationsQuery, user.Id)
 	if err != nil {
 		fmt.Println(err)
@@ -49,12 +49,12 @@ func GetReceivedInvitations(user model.User) ([]model.Invitation, error) {
 		var invitation model.Invitation
 		err := rows.Scan(&invitation.Id, &inviter.Id, &inviter.Name, &inviter.PhoneNumber)
 		if err != nil {
-			var invitations []model.Invitation
+			var invitations []model.User
 			return invitations, err
 		}
 		invitation.Inviter = inviter
 		invitation.Contact = user
-		invitations = append(invitations, invitation)
+		invitations = append(invitations, invitation.ToOutput())
 	}
 	return invitations, nil
 }

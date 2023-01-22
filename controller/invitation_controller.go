@@ -125,21 +125,21 @@ func GetInvitationsController(c *gin.Context) {
 	return
 }
 
-func getSentAndReceivedInvitations(user model.User) (map[string][]model.Invitation, error) {
-	invitations := make(map[string][]model.Invitation)
+func getSentAndReceivedInvitations(user model.User) (map[string][]model.User, error) {
+	invitations := make(map[string][]model.User)
 	sentInvitations, err := service.GetSentInvitations(user)
 	if err != nil {
 		return invitations, err
 	}
 	if sentInvitations == nil {
-		sentInvitations = []model.Invitation{}
+		sentInvitations = []model.User{}
 	}
 	receivedInvitations, err := service.GetReceivedInvitations(user)
 	if err != nil {
 		return invitations, err
 	}
 	if receivedInvitations == nil {
-		receivedInvitations = []model.Invitation{}
+		receivedInvitations = []model.User{}
 	}
 	invitations["sent_invitations"] = sentInvitations
 	invitations["received_invitations"] = receivedInvitations
