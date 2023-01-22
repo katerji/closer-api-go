@@ -3,10 +3,17 @@ package main
 import (
 	"closer-api-go/controller"
 	"closer-api-go/middleware"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("ERR LOADING ENV")
+		fmt.Println(err)
+	}
 	r := gin.Default()
 
 	api := r.Group("/api")

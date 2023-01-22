@@ -6,12 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/joho/godotenv"
 	"os"
 )
 
 func VerifyToken(token string) (model.User, error) {
-	err := godotenv.Load(".env")
 	jwtSecret := os.Getenv("JWT_SECRET")
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -39,11 +37,11 @@ func VerifyToken(token string) (model.User, error) {
 }
 
 func CreateJwt(user model.User) (string, error) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		fmt.Println()
-		return "", err
-	}
+	//err := godotenv.Load(".env")
+	//if err != nil {
+	//	fmt.Println()
+	//	return "", err
+	//}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":           user.Id,
 		"phone_number": user.PhoneNumber,

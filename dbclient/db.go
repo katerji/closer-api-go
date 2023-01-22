@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
 	"os"
 	"sync"
 	"time"
@@ -26,18 +25,11 @@ func GetDbInstance() *closerDb {
 	return instance
 }
 func getDbClient() (*closerDb, error) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		fmt.Println()
-		return nil, err
-	}
-
 	dbHost := os.Getenv("DB_HOST")
 	dbUser := os.Getenv("DB_USERNAME")
 	dbPort := os.Getenv("DB_PORT")
 	dbPass := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_DATABASE")
-	fmt.Println(dbUser, dbPass, dbName)
 	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
