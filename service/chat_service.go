@@ -126,7 +126,6 @@ func GetChatById(chatId int, userId int) (model.Chat, error) {
 			fmt.Println(err)
 			return chat, err
 		}
-		fmt.Println(user)
 		chat.SetNewUser(user)
 	}
 	chat.Id = chatId

@@ -7,7 +7,11 @@ import (
 )
 
 func InsertMessage(message model.Message) int {
-	return dbclient.GetDbInstance().Insert(insertMessageQuery, message.SenderId, message.ChatId, message.Message, message.MessageType)
+	return dbclient.GetDbInstance().Insert(insertMessageQuery, message.SenderId, message.ChatId, message.Message, model.MessageTypeText)
+}
+
+func InsertMessageImage(message model.Message) int {
+	return dbclient.GetDbInstance().Insert(insertImageMessageQuery, message.SenderId, message.ChatId, message.Message, model.MessageTypeImage, message.S3Path, message.Base64EncodedBlur)
 }
 
 func GetChatMessages(chatId int) []model.Message {
@@ -31,4 +35,5 @@ func GetChatMessages(chatId int) []model.Message {
 }
 
 const insertMessageQuery = "insert into messages_go (sender_user_id, chat_id, message, message_type) values (?, ?, ?, ?)"
+const insertImageMessageQuery = "insert into messages_go (sender_user_id, chat_id, message, message_type, s3_path, blurred_image_base64) values (?, ?, ?, ?, ?, ?)"
 const getChatMessagesQuery = "SELECT id, message, message_type, sender_user_id FROM messages_go WHERE chat_id = ? ORDER BY created_at DESC LIMIT 50"

@@ -11,7 +11,6 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("ERR LOADING ENV")
 		fmt.Println(err)
 	}
 	r := gin.Default()
@@ -39,7 +38,7 @@ func main() {
 
 	api.POST(controller.CreateMessageRoute, controller.CreateMessageController)
 	api.GET(controller.GetChatMessagesRoute, controller.GetChatMessageController)
-	//	Route::post('/upload', [MessageController::class, 'upload']);
+	api.POST(controller.UploadImageRoute, controller.UploadImageController)
 
 	r.Run(":80")
 }

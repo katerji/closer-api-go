@@ -58,7 +58,6 @@ const GetChatRoute = "/chat/:chat_id"
 func GetChatController(c *gin.Context) {
 	chatId, err := strconv.Atoi(c.Param("chat_id"))
 	if err != nil {
-		fmt.Println(chatId)
 		fmt.Println(err)
 		SendBadRequestResponse(c, ErrorMessage{})
 		return

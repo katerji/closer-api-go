@@ -37,11 +37,6 @@ func VerifyToken(token string) (model.User, error) {
 }
 
 func CreateJwt(user model.User) (string, error) {
-	//err := godotenv.Load(".env")
-	//if err != nil {
-	//	fmt.Println()
-	//	return "", err
-	//}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":           user.Id,
 		"phone_number": user.PhoneNumber,

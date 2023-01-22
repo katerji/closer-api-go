@@ -17,9 +17,7 @@ var instance *closerDb
 var once sync.Once
 
 func GetDbInstance() *closerDb {
-
 	once.Do(func() {
-		fmt.Println("inside do")
 		instance, _ = getDbClient()
 	})
 	return instance
@@ -40,7 +38,6 @@ func getDbClient() (*closerDb, error) {
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
-	fmt.Println("done")
 	return &closerDb{
 		db,
 	}, nil
