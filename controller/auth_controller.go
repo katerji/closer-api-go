@@ -46,9 +46,17 @@ func Login(c *gin.Context) {
 		ErrorResponse(c, ErrorObject{})
 		return
 	}
+	chats, err := service.GetUserChats(user.Id)
+	if err != nil {
+		ErrorResponse(c, ErrorObject{})
+		return
+	}
+	contacts, err := service.GetContacts(user.Id)
 	response := map[string]any{
 		"user":         user,
 		"access_token": jwtToken,
+		"chats":        chats,
+		"contacts":     contacts,
 	}
 	c.JSON(http.StatusOK, response)
 }

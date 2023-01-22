@@ -56,7 +56,6 @@ func LoginService(phoneNumber string, password string) (model.User, error) {
 
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	fmt.Println(err)
 	return err == nil
 }
 

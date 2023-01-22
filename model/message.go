@@ -10,6 +10,17 @@ type Message struct {
 	Base64EncodedBlur string      `json:"base64_encoded_blur"`
 }
 
+func (m *Message) ToOutput() Message {
+	return Message{
+		Id:                m.Id,
+		SenderId:          m.SenderId,
+		ChatId:            m.ChatId,
+		Message:           m.Message,
+		MessageType:       m.MessageType,
+		Base64EncodedBlur: m.Base64EncodedBlur,
+	}
+}
+
 type MessageType int
 
 const (

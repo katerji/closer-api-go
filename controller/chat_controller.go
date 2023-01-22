@@ -68,6 +68,7 @@ func GetChatController(c *gin.Context) {
 		return
 	}
 	chat, err := service.GetChatById(chatId, user.Id)
+	chat.SetMessages(service.GetChatMessages(chatId))
 	if err != nil {
 		ErrorResponse(c, ErrorObject{})
 		return

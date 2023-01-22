@@ -3,6 +3,7 @@ package service
 import (
 	"closer-api-go/dbclient"
 	"closer-api-go/model"
+	"database/sql"
 	"fmt"
 )
 
@@ -23,17 +24,19 @@ func GetChatMessages(chatId int) []model.Message {
 	var messages []model.Message
 	for rows.Next() {
 		var message model.Message
-		err = rows.Scan(&message.Id, &message.Message, &message.MessageType, &message.SenderId)
+		var base64EncodedString sql.NullString
+		err = rows.Scan(&message.Id, &message.Message, &message.MessageType, &message.SenderId, &base64EncodedString)
 		if err != nil {
 			fmt.Println(err)
 			return []model.Message{}
 		}
 		message.ChatId = chatId
-		messages = append(messages, message)
+		message.Base64EncodedBlur = base64EncodedString.String
+		messages = append(messages, message.ToOutput())
 	}
 	return messages
 }
 
-const insertMessageQuery = "insert into messages_go (sender_user_id, chat_id, message, message_type) values (?, ?, ?, ?)"
+const insertMessageQuery = "insert into messages_go (sender_user_id, chat_id, message, message_type, ) values (?, ?, ?, ?)"
 const insertImageMessageQuery = "insert into messages_go (sender_user_id, chat_id, message, message_type, s3_path, blurred_image_base64) values (?, ?, ?, ?, ?, ?)"
-const getChatMessagesQuery = "SELECT id, message, message_type, sender_user_id FROM messages_go WHERE chat_id = ? ORDER BY created_at DESC LIMIT 50"
+const getChatMessagesQuery = "SELECT id, message, message_type, sender_user_id, blurred_image_base64 FROM messages_go WHERE chat_id = ? ORDER BY created_at DESC LIMIT 50"

@@ -123,7 +123,7 @@ func UploadImageController(c *gin.Context) {
 	messageId := service.InsertMessageImage(messageObject)
 	messageObject.Id = messageId
 	response := map[string]model.Message{
-		"message": messageObject,
+		"message": messageObject.ToOutput(),
 	}
 	c.JSON(http.StatusOK, response)
 	return

@@ -75,6 +75,14 @@ func GetUserChats(userId int) ([]model.Chat, error) {
 			messages = []model.Message{}
 		}
 		chat.SetMessages(messages)
+		if len(chat.Name) == 0 {
+			var chatName string
+			for _, user := range chat.Users {
+				chatName = user.Name
+				break
+			}
+			chat.Name = chatName
+		}
 		chats[chatId] = chat
 	}
 	i, values := 0, make([]model.Chat, len(chats))
@@ -129,6 +137,14 @@ func GetChatById(chatId int, userId int) (model.Chat, error) {
 		chat.SetNewUser(user)
 	}
 	chat.Id = chatId
+	if chat.Name == "" {
+		var chatName string
+		for _, user := range chat.Users {
+			chatName = user.Name
+			break
+		}
+		chat.Name = chatName
+	}
 	return chat, nil
 }
 

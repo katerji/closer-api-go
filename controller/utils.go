@@ -60,6 +60,5 @@ func GetCurrentUser(c *gin.Context) model.User {
 		fmt.Println(err)
 		return user
 	}
-	fmt.Println(user)
 	return user
 }
