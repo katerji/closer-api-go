@@ -120,8 +120,12 @@ func UploadImageController(c *gin.Context) {
 		S3Path:      filePathOnS3,
 		Base64EncodedBlur: blurredImageBase64,
 	}
-	service.InsertMessageImage(messageObject)
-	SendEmptyOkayResponse(c)
+	messageId := service.InsertMessageImage(messageObject)
+	messageObject.Id = messageId
+	response := map[string]model.Message{
+		"message": messageObject,
+	}
+	c.JSON(http.StatusOK, response)
 	return
 }
 
