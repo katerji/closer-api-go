@@ -41,27 +41,26 @@ func InviteController(c *gin.Context) {
 	return
 }
 
-const AcceptInvitationRoute = "/accept/:invitation_id"
+const AcceptInvitationRoute = "/accept/:inviter_id"
 
 func AcceptInvitationController(c *gin.Context) {
-	invitationId, _ := strconv.Atoi(c.Param("invitation_id"))
+	inviterId, _ := strconv.Atoi(c.Param("inviter_id"))
 	user := GetCurrentUser(c)
-	if !service.IsAuthorizedToAcceptOrRejectInvitation(user.Id, invitationId) {
+	if !service.IsAuthorizedToAcceptOrRejectInvitation(user.Id, inviterId) {
 		SendUnauthorizedResponse(c)
 		return
 	}
-	inviterUser, err := service.GetInviterFromInvitationId(invitationId)
+	inviter, err := service.GetUserById(inviterId)
 	if err != nil {
-		SendBadRequestResponse(c, ErrorMessage{"invitation not found"})
+		ErrorResponse(c, ErrorObject{})
 		return
 	}
-
-	err = service.AddContact(user, inviterUser)
+	err = service.AddContact(user, inviter)
 	if err != nil {
 		SendBadRequestResponse(c, ErrorMessage{"Already contacts"})
 		return
 	}
-	service.DeleteInvitation(invitationId)
+	service.DeleteInvitationByUserIds(user.Id, inviterId)
 	invitations, err := getSentAndReceivedInvitations(user)
 	if err != nil {
 		ErrorResponse(c, ErrorObject{"Error fetching invitations", 500})
@@ -71,16 +70,16 @@ func AcceptInvitationController(c *gin.Context) {
 	return
 }
 
-const RejectInvitationRoute = "/reject/:invitation_id"
+const RejectInvitationRoute = "/reject/:inviter_id"
 
 func RejectInvitationController(c *gin.Context) {
-	invitationId, _ := strconv.Atoi(c.Param("invitation_id"))
+	inviterId, _ := strconv.Atoi(c.Param("inviter_id"))
 	user := GetCurrentUser(c)
-	if !service.IsAuthorizedToAcceptOrRejectInvitation(user.Id, invitationId) {
+	if !service.IsAuthorizedToAcceptOrRejectInvitation(user.Id, inviterId) {
 		SendUnauthorizedResponse(c)
 		return
 	}
-	service.DeleteInvitation(invitationId)
+	service.DeleteInvitationByUserIds(user.Id, inviterId)
 	invitations, err := getSentAndReceivedInvitations(user)
 	if err != nil {
 		ErrorResponse(c, ErrorObject{"Error fetching invitations", 500})
