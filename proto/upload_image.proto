@@ -1,0 +1,21 @@
+syntax = "proto3";
+option go_package = "./proto";
+package proto;
+
+service FileUploader {
+  rpc UploadImage (stream UploadImageRequest) returns (stream UploadFileResponse) {}
+}
+
+message UploadImageRequest {
+  bytes image_bytes = 1;
+  string message = 2;
+  int64 chat_id = 3;
+  int64 file_extension = 4;
+  float image_size = 5;
+}
+
+message UploadFileResponse {
+  bool success = 1;
+  string message = 2;
+  double progress = 3;
+}
