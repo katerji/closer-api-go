@@ -10,7 +10,7 @@ message UploadImageRequest {
   bytes image_bytes = 1;
   string message = 2;
   int64 chat_id = 3;
-  int64 file_extension = 4;
+  string file_extension = 4;
   float image_size = 5;
 }
 

@@ -3,6 +3,7 @@ package main
 import (
 	"closer-api-go/controller"
 	"closer-api-go/middleware"
+	"closer-api-go/service"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -39,6 +40,11 @@ func main() {
 	api.POST(controller.CreateMessageRoute, controller.CreateMessageController)
 	api.GET(controller.GetChatMessagesRoute, controller.GetChatMessageController)
 	api.POST(controller.UploadImageRoute, controller.UploadImageController)
+	s := service.Server{}
+	go s.InitGrpc()
 
-	r.Run(":80")
+	err = r.Run(":85")
+	if err != nil {
+		fmt.Println(err)
+	}
 }
