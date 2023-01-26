@@ -1,10 +1,13 @@
 package service
 
 import (
+	"closer-api-go/awsclient"
 	"closer-api-go/closerjwt"
 	"closer-api-go/proto"
 	"encoding/base64"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/nfnt/resize"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -51,28 +54,23 @@ func (s *Server) UploadImage(stream proto.FileUploader_UploadImageServer) error 
 	if err != nil {
 		return status.Errorf(codes.Unauthenticated, "invalid token: %v", err)
 	}
-	var buffer []byte
-	var message string
-	var imageExtension string
-	fmt.Println(message)
+	file, _ := os.CreateTemp("", "")
+	defer func(name string) {
+		err := os.Remove(name)
+		if err != nil {
+
+		}
+	}(file.Name())
+	var fileExtension string
+	var chatId int
 	for {
 		data, err := stream.Recv()
 		if err == io.EOF {
-			fileName := fmt.Sprintf("%s%d%d%s", os.TempDir(), user.Id, time.Now().Unix(), imageExtension)
-			file, err := os.Create(fileName)
-			defer func(name string) {
-				err := os.Remove(name)
-				if err != nil {
-
-				}
-			}(file.Name())
 			if err != nil {
 				fmt.Println(err)
 			}
-			_, err = file.Write(buffer)
-			if err != nil {
-				fmt.Println(err)
-			}
+			fileName := fmt.Sprintf("%d/%d/%d%s", chatId, user.Id, time.Now().Unix(), fileExtension)
+			UploadToS3(file, fileName)
 			return stream.Send(&proto.UploadFileResponse{
 				Success:           true,
 				Progress:          1.0,
@@ -82,15 +80,16 @@ func (s *Server) UploadImage(stream proto.FileUploader_UploadImageServer) error 
 		if err != nil {
 			log.Printf("Error receiving file: %v", err)
 		}
-		buffer = append(buffer, data.GetImageBytes()...)
-		imageExtension = data.FileExtension
-		message = data.Message
+		file.Write(data.GetImageBytes())
+		stat, _ := file.Stat()
 		if err := stream.Send(&proto.UploadFileResponse{
 			Success:  false,
-			Progress: float64(len(buffer)) / float64(data.ImageSize),
+			Progress: float64(stat.Size()) / float64(data.ImageSize),
 		}); err != nil {
 			return err
 		}
+		fileExtension = data.FileExtension
+		chatId = int(data.ChatId)
 	}
 }
 
@@ -113,11 +112,23 @@ func blurAndResizeImage(file *os.File) string {
 			fmt.Println(err)
 		}
 	}(tempFile.Name())
-	defer tempFile.Close()
 	err = jpeg.Encode(tempFile, resizedImage, nil)
 	readFile, err := os.ReadFile(tempFile.Name())
 	if err != nil {
 		return ""
 	}
 	return base64.StdEncoding.EncodeToString(readFile)
+}
+
+func UploadToS3(file *os.File, fileName string) {
+	s3Client := awsclient.GetS3Client()
+	putObjectInput := s3.PutObjectInput{
+		Body:   file,
+		Bucket: aws.String(awsclient.Bucket),
+		Key:    aws.String(fileName),
+	}
+	_, err := s3Client.PutObject(&putObjectInput)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
