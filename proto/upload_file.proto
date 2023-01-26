@@ -16,6 +16,6 @@ message UploadImageRequest {
 
 message UploadFileResponse {
   bool success = 1;
-  string message = 2;
-  double progress = 3;
+  double progress = 2;
+  string base64EncodedBlur = 3;
 }
