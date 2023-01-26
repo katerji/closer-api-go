@@ -40,7 +40,7 @@ func main() {
 	api.POST(controller.CreateMessageRoute, controller.CreateMessageController)
 	api.GET(controller.GetChatMessagesRoute, controller.GetChatMessageController)
 	api.POST(controller.UploadImageRoute, controller.UploadImageController)
-	s := service.Server{}
+	s := service.GrpcServer{}
 	go s.InitGrpc()
 
 	err = r.Run(":85")
